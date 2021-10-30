@@ -1,0 +1,83 @@
+name: Bug report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-was-tried
+    attributes:
+      label: What were you trying to do?
+      description: Describe what you were trying to accomplish.
+    validations:
+      required: true
+  - type: textarea
+    id: what-was-done
+    attributes:
+      label: What did you do?
+      description: Describe exactly what you did to see the bug. Try to make this as reproducible as possible.
+    validations:
+      required: true
+  - type: textarea
+    id: what-was-expected
+    attributes:
+      label: What did you expect to see?
+      description: Describe the expected (non-bug) output.
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What actually happened?
+      description: Descirbe what actually happened. If you got an error, paste the error message or logs below.
+    validations:
+      required: false
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version
+      description: What operating system and version are you running?
+    validations:
+      required: true
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: What version of Python are you running?
+    validations:
+      required: true
+  - type: input
+    id: software-version
+    attributes:
+      label: Software version
+      description: What version of our software are you running?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/marwanhawari/ghget/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

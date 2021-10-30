@@ -1,0 +1,57 @@
+name: release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  
+  # This CI job runs the type checker (pytype) and unit tests (pytest) with tox
+  tox:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.TOKEN }}
+    
+    strategy:
+      matrix:
+        python: [3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Update pip, setuptools, and wheel
+        run: pip install --upgrade pip setuptools wheel
+      - name: Install tox
+        run: pip install tox
+      - name: Run tox
+        # Run tox using the version of Python in `PATH`
+        run: tox -e py
+  
+  # This CD job deploys the package to PyPI. It only runs if the CI job is successful and if we tag a commit with a new version number
+  # This is a separate job entirely because it only needs to run once (and avoids the matrix of python versions in the previous job)
+  pypi:
+    needs: [tox]
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Update pip, setuptools, and wheel
+        run: pip install --upgrade pip setuptools wheel
+      - name: Install build and twine
+        run: pip install build twine
+      - name: Build distribution and deploy to PyPI
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python3 -m build
+          twine upload dist/*

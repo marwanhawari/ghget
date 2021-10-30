@@ -1,0 +1,12 @@
+[flake8]
+exclude = venv_*/, .svn, CVS, .bzr, .hg, .git, __pycache__, .tox, .eggs, *.egg
+filename = *.py
+# Change max-line-length to the black default
+max-line-length = 88
+extend-ignore =
+    # Whitespace before ':'
+    E203
+    # Too many leading '#' for block comment
+    E266
+    # Line too long - black should take care of this
+    E501

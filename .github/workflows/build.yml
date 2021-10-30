@@ -1,0 +1,35 @@
+name: build
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - v*
+  pull_request:
+
+jobs:
+  
+  # This CI job runs the type checker (pytype) and unit tests (pytest) with tox
+  tox:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.TOKEN }}
+    
+    strategy:
+      matrix:
+        python: [3.7, 3.8, 3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Update pip, setuptools, and wheel
+        run: pip install --upgrade pip setuptools wheel
+      - name: Install tox
+        run: pip install tox
+      - name: Run tox
+        # Run tox using the version of Python in `PATH`
+        run: tox -e py

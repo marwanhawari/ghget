@@ -1,0 +1,11 @@
+black
+build
+coverage
+flake8
+pipdeptree
+pre-commit
+pytest
+pytype
+tox
+twine
+wheel
