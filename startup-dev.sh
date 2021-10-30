@@ -9,6 +9,10 @@ source venv_$pwd/bin/activate
 
 # Install the dev packages
 pip install --upgrade pip setuptools
+if [ -f requirements.txt ]
+then
+    pip install -r requirements.txt
+fi
 pip install -r requirements-dev.txt
 
 # Install the pre-commit hook
