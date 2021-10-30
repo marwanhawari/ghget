@@ -29,3 +29,4 @@ RUN pip install --upgrade pip && \
 USER 10001
 
 ENTRYPOINT ["ghget"]
+CMD ["--help"]
