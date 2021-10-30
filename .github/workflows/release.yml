@@ -55,3 +55,25 @@ jobs:
         run: |
           python3 -m build
           twine upload dist/*
+  
+  # This CD job builds a Docker image and pushes it to Docker Hub. It only runs if the CI job is successful and if we tag a commit with a new version number
+  docker:
+    needs: [tox]
+
+    runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKER_IMAGE: ${{ github.repository }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set GIT_TAG environment variable
+        run: echo "GIT_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Login to the container registry
+        run: echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - name: Build the Docker image
+        run: docker build -t $DOCKER_IMAGE:$GIT_TAG -t $DOCKER_IMAGE:latest .
+      - name: Push the Docker image to the container registry
+        run: docker push --all-tags $DOCKER_IMAGE
+      
