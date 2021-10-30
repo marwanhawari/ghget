@@ -6,6 +6,7 @@ pipdeptree
 pre-commit
 pytest
 pytype
+requests
 tox
 twine
 wheel
