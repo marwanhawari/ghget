@@ -28,7 +28,7 @@ RUN pip install --upgrade pip && \
 ##################
 ## SECOND STAGE ##
 ##################
-FROM --platform=linux/amd64 python:3.9-alpine AS runner
+FROM --platform=linux/amd64 python:3.9-slim AS runner
 
 COPY --from=builder /opt/venv /opt/venv
 
