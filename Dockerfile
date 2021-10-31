@@ -21,9 +21,13 @@ RUN python3 -m venv $VIRTUAL_ENV
 # "Activate" the virtual environment by prepending the venv executable path to the PATH variable
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+# Copy the necessary files
+COPY . src/
+
 # Install python packages (now within the virtual environment)
 RUN pip install --upgrade pip && \
-    pip install ghget
+    pip install ./src && \
+    rm -rf src
 
 # Switch to the non-root user
 USER 10001
