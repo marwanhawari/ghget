@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1
-FROM --platform=linux/amd64 python:3.9
+##################
+## FIRST STAGE  ##
+##################
+FROM --platform=linux/amd64 python:3.9 AS builder
 
 # Install linux packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -7,13 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tree && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Create a non-root group and user
-RUN groupadd --gid 10001 app && \
-    useradd --uid 10001 --gid app --shell /bin/bash --create-home app
-
-# Switch to the user's home directory
-WORKDIR /home/app
 
 # Create a python virtual environment within the docker container
 ENV VIRTUAL_ENV=/opt/venv
@@ -28,6 +24,23 @@ COPY . src/
 RUN pip install --upgrade pip && \
     pip install ./src && \
     rm -rf src
+
+##################
+## SECOND STAGE ##
+##################
+FROM --platform=linux/amd64 python:3.9-alpine AS runner
+
+COPY --from=builder /opt/venv /opt/venv
+
+# Create a non-root group and user
+RUN groupadd --gid 10001 app && \
+    useradd --uid 10001 --gid app --shell /bin/bash --create-home app
+
+# Switch to the user's home directory
+WORKDIR /tmp
+
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Switch to the non-root user
 USER 10001
