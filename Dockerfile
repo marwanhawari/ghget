@@ -37,7 +37,7 @@ RUN groupadd --gid 10001 app && \
     useradd --uid 10001 --gid app --shell /bin/bash --create-home app
 
 # Switch to the user's home directory
-WORKDIR /tmp
+WORKDIR /home/app
 
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
