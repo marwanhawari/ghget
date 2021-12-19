@@ -21,7 +21,6 @@ class GH:
 
         self.response = self.get_http_reponse(self.api_url, self.headers)
         self.response_content = self.response.json()
-        print(self.response.headers)
 
     def trim_url(self, url: str) -> str:
         if url.startswith("https://"):
