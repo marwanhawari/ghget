@@ -44,10 +44,9 @@ def main() -> int:
         if tree_path.is_relative_to(gh.file_path):
             if is_root:
                 partition_path = tree_path
-                download_contents(path, gh, partition_path)
             else:
                 partition_path = Path(str(tree_path).partition(f"{prefix_path}/")[-1])
-                download_contents(path, gh, partition_path)
+            download_contents(path, gh, partition_path)
 
     return 0
 
