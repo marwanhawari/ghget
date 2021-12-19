@@ -1,10 +1,11 @@
+import os
 import requests
 
 
 class GH:
-    def __init__(self, url: str, token: str = "") -> None:
+    def __init__(self, url: str) -> None:
         self.url = url
-        self.token = token
+        self.token = os.getenv("GITHUB_TOKEN")
         self.headers = self.generate_headers(self.token)
 
         self.trimmed_url = self.trim_url(self.url)

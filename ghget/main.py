@@ -1,4 +1,3 @@
-import os
 import sys
 import argparse
 import requests
@@ -21,6 +20,8 @@ def download_file(raw_file_url: str, file_path: Path) -> None:
 
 def download_contents(gh: GH, repo_object: dict, download_path: Path) -> None:
     if repo_object["type"] == "tree":
+        if download_path.exists():
+            raise SystemExit(f"The directory '{download_path}' already exists!")
         download_path.mkdir(parents=True)
     else:
         raw_file_url = generate_raw_url(
@@ -72,10 +73,7 @@ def main(argv: Optional[Sequence] = None) -> int:
     args = parser.parse_args(argv)
 
     url = args.url
-    gh = GH(
-        url,
-        os.getenv("GITHUB_TOKEN"),
-    )
+    gh = GH(url)
 
     all_download_paths = get_download_paths(gh)
     if len(all_download_paths) == 0:
