@@ -17,7 +17,7 @@ Download single files or directories from a GitHub repository without cloning it
 # Features
 * No need to manually create a raw GitHub url for individual files, just provide the web url.
 * Recursively download entire directories.
-* Download from private repos using your GitHub token.
+* Download from private repos using a `GITHUB_TOKEN` environment variable.
 * Lightweight, easy to install, and easy to use.
 
 # Installation
@@ -34,10 +34,6 @@ Downloading pipdeptree.py file...
 Done!
 ```
 
-* Use your GitHub token to access your private repos:
-```
-$ ghget -t $GITHUB_TOKEN https://github.com/<username>/<private-repo>/blob/master/<file>
-```
 * Recursively download a specific directory from a GitHub repo: 
 ```
 $ ghget https://github.com/pandas-dev/pandas/tree/master/scripts
@@ -76,9 +72,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -t TOKEN, --token TOKEN
-                        Your GitHub token. This is needed for accessing private repos or overcoming the unauthenticated request rate limit for the GitHub API.
 ```
 
 ### Limitation
-* The number of files you can download is limited by the GitHub API request rate limit of 60 requests/hour for unauthenticated requests. Currently, `ghget` makes an HTTP request every time it encounters a directory (not files), so as long as you are downloading less than 60 total directories/hour you shouldn't have any issues. However, you can increase your request rate limit to 5000 requests/hour if you pass your GitHub token as an argument.
+* The number of files you can download is limited by the GitHub API request rate limit of 60 requests/hour for unauthenticated requests. Currently, `ghget` makes 1-2 HTTP requests per usage. However, you can increase your request rate limit to 5000 requests/hour if you set a `GITHUB_TOKEN` environment variable.

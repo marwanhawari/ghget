@@ -21,9 +21,15 @@ class GH:
 
         self.response = self.get_http_reponse(self.api_url, self.headers)
         self.response_content = self.response.json()
+        print(self.response.headers)
 
     def trim_url(self, url: str) -> str:
-        return url.partition("https://")[-1].rstrip("/")
+        if url.startswith("https://"):
+            url = url.partition("https://")[-1]
+        elif url.startswith("http://"):
+            url = url.partition("http://")[-1]
+
+        return url.rstrip("/")
 
     def generate_headers(self, token: str) -> dict:
         headers = {"Accept": "application/vnd.github.v3+json"}

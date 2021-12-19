@@ -4,4 +4,3 @@
 
 Known bugs:
 - If branch/tag has a / in it, it won't work
-- Experiment with GITHUB_TOKEN env variable
