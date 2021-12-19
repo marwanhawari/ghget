@@ -11,6 +11,8 @@ class GH:
         self.components = self.trimmed_url.split("/")
         self.owner = self.components[1]
         self.repo = self.components[2]
+        self.branches_and_tags = self.get_branches_and_tags(self.owner, self.repo)
+        print(self.branches_and_tags)
 
         (
             self.branch,
@@ -40,6 +42,17 @@ class GH:
         else:
             error_message = response.json()["message"]
             raise SystemExit(f"Error: {error_message}")
+
+    def get_branches_and_tags(self, owner, repo) -> list:
+        branches_api_url = f"https://api.github.com/repos/{owner}/{repo}/branches"
+        branches_objects = self.get_http_reponse(branches_api_url, self.headers).json()
+        branches = [obj["name"] for obj in branches_objects]
+
+        tags_api_url = f"https://api.github.com/repos/{owner}/{repo}/tags"
+        tags_objects = self.get_http_reponse(tags_api_url, self.headers).json()
+        tags = [obj["name"] for obj in tags_objects]
+
+        return branches + tags
 
     def generate_api_url(self, components: list, owner: str, repo: str) -> tuple:
         # Repo homepage, default branch
