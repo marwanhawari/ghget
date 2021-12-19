@@ -9,5 +9,11 @@
 
 
 1. Make 1 request to the root of the dir to get the tree
+    - if trying to download the default root of the repo, then need to make an additional request to the contents repo to get the default branch before make request to the trees API
 2. Save what their specific file/dir to download was (ex: docs/algorithms) -> algorithms is now the root dir where everything will be saved
 3. 
+
+
+
+Known bugs:
+- If branch/tag has a / in it, it won't work

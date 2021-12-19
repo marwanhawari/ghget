@@ -26,7 +26,7 @@ class GH:
         self.type = self.get_type(self.response_content)
 
     def trim_url(self, url: str) -> str:
-        return url.lstrip("https://").rstrip("/")
+        return url.partition("https://")[-1].rstrip("/")
 
     def get_headers(self, token: str) -> dict:
         headers = {"Accept": "application/vnd.github.v3+json"}
@@ -53,14 +53,17 @@ class GH:
     def generate_api_url(self, components: list, owner: str, repo: str) -> tuple:
         # Repo homepage, default branch
         if len(components) == 3:
-            branch = None
-            file_path = None
+            repo_api_url = f"https://api.github.com/repos/{owner}/{repo}"
+            branch = self.get_http_reponse(
+                repo_api_url, {"Accept": "application/vnd.github.v3+json"}
+            ).json()["default_branch"]
+            file_path = ""
             file_name = repo
             api_url = f"https://api.github.com/repos/{owner}/{repo}/contents/"
         # Repo homepage, on a tag or non-default branch
         elif len(components) == 5:
             branch = components[4]
-            file_path = None
+            file_path = ""
             file_name = repo
             api_url = (
                 f"https://api.github.com/repos/{owner}/{repo}/contents/?ref={branch}"
@@ -72,4 +75,6 @@ class GH:
             file_name = components[-1]
             api_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{file_path}?ref={branch}"
 
+        print(branch)
+        api_url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=true"
         return branch, file_path, file_name, api_url
