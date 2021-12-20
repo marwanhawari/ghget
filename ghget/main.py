@@ -1,7 +1,7 @@
 import sys
 import argparse
 import requests
-from typing import Optional, Sequence, Tuple, List
+from typing import Optional, Sequence
 from pathlib import Path
 from ghget.gh import GH
 
@@ -30,7 +30,7 @@ def download_contents(gh: GH, repo_object: dict, download_path: Path) -> None:
         download_file(raw_file_url, download_path)
 
 
-def get_download_paths(gh: GH) -> List[Tuple[dict, str]]:
+def get_download_paths(gh: GH) -> list[tuple[dict, Path]]:
     prefix_path = Path(gh.file_path).parent
     has_prefix_path = prefix_path != Path(".")
     all_repo_objects = gh.response_content["tree"]
