@@ -48,7 +48,7 @@ class GH:
             error_message = response.json()["message"]
             raise SystemExit(f"Error: {error_message}")
 
-    def get_branch(self, url, owner, repo):
+    def get_branch(self, url: str, owner: str, repo: str) -> str:
         session = HTMLSession()
         html_url = f"https://{url}"
         response = session.get(html_url)

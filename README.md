@@ -30,14 +30,14 @@ pip install ghget
 * Easily download single files given the GitHub url:
 ```
 $ ghget https://github.com/naiquevin/pipdeptree/blob/master/pipdeptree.py
-Downloading pipdeptree.py file...
+Downloading 'pipdeptree.py'...
 Done!
 ```
 
 * Recursively download a specific directory from a GitHub repo: 
 ```
 $ ghget https://github.com/pandas-dev/pandas/tree/master/scripts
-Downloading scripts directory...
+Downloading 'scripts'...
 Done!
 
 $ tree

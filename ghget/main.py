@@ -79,6 +79,8 @@ def main(argv: Optional[Sequence] = None) -> int:
     if len(all_download_paths) == 0:
         raise SystemExit(f"Could not find any contents at {url}")
 
+    print(f"Downloading '{gh.file_name}'...")
+
     for repo_object, download_path in all_download_paths:
         download_contents(gh, repo_object, download_path)
 
