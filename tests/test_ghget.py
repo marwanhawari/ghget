@@ -1,29 +1,83 @@
 import os
+import pytest
 from ghget.gh import GH
-
-file_url = "https://github.com/marwanhawari/pyinterview/blob/main/docs/index.md"
-file_gh = GH(file_url)
-
-dir_url = "https://github.com/marwanhawari/pyinterview/tree/main/tests"
-dir_gh = GH(dir_url, os.environ.get("GITHUB_TOKEN"))
-
-recursive_dir_url = "https://github.com/marwanhawari/pyinterview/tree/main/docs/"
-recursive_dir_gh = GH(recursive_dir_url, os.environ.get("GITHUB_TOKEN"))
+from ghget.main import main
 
 
-def test_download_file():
-    assert len(file_gh.headers) == 1
-    assert file_gh.response_content["name"] == "index.md"
-    assert file_gh.type == "file"
+@pytest.mark.parametrize(
+    "url",
+    [
+        ("https://github.com/marwanhawari/pyinterview/tree/main/docs/algorithms"),
+        ("http://github.com/marwanhawari/pyinterview/tree/main/docs/algorithms"),
+        ("github.com/marwanhawari/pyinterview/tree/main/docs/algorithms"),
+    ],
+)
+def test_GH(url):
+    gh = GH(url)
+    assert len(gh.headers) == 2
+    assert gh.owner == "marwanhawari"
+    assert gh.repo == "pyinterview"
+    assert gh.file_name == "algorithms"
+    assert gh.file_path == "docs/algorithms"
+    assert (
+        gh.trimmed_url
+        == "github.com/marwanhawari/pyinterview/tree/main/docs/algorithms"
+    )
+    assert len(gh.response_content["tree"]) == 58
 
 
-def test_download_dir():
-    assert len(dir_gh.headers) == 2
-    assert len(dir_gh.response_content) == 8
-    assert dir_gh.type == "dir"
+@pytest.mark.parametrize(
+    "url, root_download, contents_size",
+    [
+        ("https://github.com/marwanhawari/pyinterview", "pyinterview", 59),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/gh-pages",
+            "pyinterview",
+            73,
+        ),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/gh-pages/search",
+            "search",
+            2,
+        ),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/gh-pages/404.html",
+            "404.html",
+            1,
+        ),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/main/README.md",
+            "README.md",
+            1,
+        ),
+        ("https://github.com/marwanhawari/pyinterview/tree/main/docs", "docs", 16),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/main/docs/index.md",
+            "index.md",
+            1,
+        ),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/main/docs/algorithms",
+            "algorithms",
+            3,
+        ),
+        (
+            "https://github.com/marwanhawari/pyinterview/tree/main/docs/algorithms/searching.md",
+            "searching.md",
+            1,
+        ),
+    ],
+)
+def test_root_repo(tmp_path, url, root_download, contents_size):
+    test_dir = tmp_path / "test_dir"
+    test_dir.mkdir()
+    os.chdir(test_dir)
 
+    returncode = main([url])
+    assert returncode == 0
 
-def test_download_recursive_dir():
-    assert len(recursive_dir_gh.headers) == 2
-    assert len(recursive_dir_gh.response_content) == 7
-    assert recursive_dir_gh.type == "dir"
+    test_dir_contents = set(test_dir.rglob("**/*"))
+    assert len(test_dir_contents) == contents_size
+
+    root_dir = test_dir / root_download
+    assert root_dir in test_dir_contents
