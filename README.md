@@ -17,7 +17,7 @@ Download single files or directories from a GitHub repository without cloning it
 # Features
 * No need to manually create a raw GitHub url for individual files, just provide the web url.
 * Recursively download entire directories.
-* Download from private repos using a `GITHUB_TOKEN` environment variable.
+* Download from private repos by setting a `GITHUB_TOKEN` environment variable.
 * Lightweight, easy to install, and easy to use.
 
 # Installation
@@ -65,14 +65,11 @@ $ tree
 
 ### Options
 ```
-usage: ghget [-h] [-t TOKEN] url
+usage: ghget [-h] url
 
 positional arguments:
-  url                   The url for the file or directory you want to download.
+  url         The url for the file or directory you want to download.
 
 optional arguments:
-  -h, --help            show this help message and exit
+  -h, --help  show this help message and exit
 ```
-
-### Limitation
-* The number of files you can download is limited by the GitHub API request rate limit of 60 requests/hour for unauthenticated requests. Currently, `ghget` makes 1-2 HTTP requests per usage. However, you can increase your request rate limit to 5000 requests/hour if you set a `GITHUB_TOKEN` environment variable.
