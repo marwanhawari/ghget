@@ -52,18 +52,20 @@ class GH:
         session = HTMLSession()
         html_url = f"https://{url}"
         response = session.get(html_url)
-        branch_components = (
-            response.html.find("#code-tab", first=True).attrs["href"].split("/")
-        )
-        if len(branch_components) > 3:
-            # If more than 3 components, then you're on a non-default branch
-            branch = "/".join(branch_components[4:])
-        else:
-            # Otherwise get the default branch
-            repo_api_url = f"https://api.github.com/repos/{owner}/{repo}"
-            branch = self.get_http_reponse(repo_api_url, self.headers).json()[
-                "default_branch"
-            ]
+        if response.status_code == 200:
+            branch_components = (
+                response.html.find("#code-tab", first=True).attrs["href"].split("/")
+            )
+            if len(branch_components) > 3:
+                # If more than 3 components, then you're on a non-default branch
+                branch = "/".join(branch_components[4:])
+                return branch
+
+        # Otherwise get the default branch
+        repo_api_url = f"https://api.github.com/repos/{owner}/{repo}"
+        branch = self.get_http_reponse(repo_api_url, self.headers).json()[
+            "default_branch"
+        ]
 
         return branch
 
