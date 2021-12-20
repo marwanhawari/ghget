@@ -76,6 +76,16 @@ def test_GH(url):
             "benchmarks",
             6,
         ),
+        (
+            "https://github.com/pandas-dev/pandas/blob/debian/0.7.0-1/ez_setup.py",
+            "ez_setup.py",
+            1,
+        ),
+        (
+            "https://github.com/pandas-dev/pandas/tree/debian/0.7.0-1/debian/cythonized-files",
+            "cythonized-files",
+            6,
+        ),
     ],
 )
 def test_root_repo(tmp_path, url, root_download, contents_size):
