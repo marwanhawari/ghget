@@ -1,5 +1,6 @@
 import os
 import requests
+from requests_html import HTMLSession
 
 
 class GH:
@@ -12,13 +13,13 @@ class GH:
         self.components = self.trimmed_url.split("/")
         self.owner = self.components[1]
         self.repo = self.components[2]
+        self.branch = self.get_branch(self.trimmed_url, self.owner, self.repo)
 
         (
-            self.branch,
             self.file_path,
             self.file_name,
             self.api_url,
-        ) = self.generate_api_url(self.components, self.owner, self.repo)
+        ) = self.generate_api_url(self.components, self.owner, self.repo, self.branch)
 
         self.response = self.get_http_reponse(self.api_url, self.headers)
         self.response_content = self.response.json()
@@ -47,26 +48,44 @@ class GH:
             error_message = response.json()["message"]
             raise SystemExit(f"Error: {error_message}")
 
-    def generate_api_url(self, components: list, owner: str, repo: str) -> tuple:
-        # Repo homepage, default branch
-        if len(components) == 3:
+    def get_branch(self, url, owner, repo):
+        session = HTMLSession()
+        html_url = f"https://{url}"
+        response = session.get(html_url)
+        branch_components = (
+            response.html.find("#code-tab", first=True).attrs["href"].split("/")
+        )
+        if len(branch_components) > 3:
+            # If more than 3 components, then you're on a non-default branch
+            branch = "/".join(branch_components[4:])
+        else:
+            # Otherwise get the default branch
             repo_api_url = f"https://api.github.com/repos/{owner}/{repo}"
             branch = self.get_http_reponse(repo_api_url, self.headers).json()[
                 "default_branch"
             ]
+
+        return branch
+
+    def generate_api_url(
+        self, components: list, owner: str, repo: str, branch: str
+    ) -> tuple:
+
+        branch_len = len(branch.split("/"))
+
+        # Repo homepage, default branch
+        if len(components) == 3:
             file_path = ""
             file_name = repo
         # Repo homepage, on a tag or non-default branch
-        elif len(components) == 5:
-            branch = components[4]
+        elif len(components) == 4 + branch_len:
             file_path = ""
             file_name = repo
         # File or folder within the repo
-        elif len(components) > 5:
-            branch = components[4]
-            file_path = "/".join(components[5:])
+        elif len(components) > 4 + branch_len:
+            file_path = "/".join(components[4 + branch_len :])
             file_name = components[-1]
 
         api_url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=true"
 
-        return branch, file_path, file_name, api_url
+        return file_path, file_name, api_url

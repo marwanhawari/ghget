@@ -66,6 +66,16 @@ def test_GH(url):
             "searching.md",
             1,
         ),
+        (
+            "https://github.com/numpy/numpy/blob/maintenance/1.0.3.x/COMPATIBILITY",
+            "COMPATIBILITY",
+            1,
+        ),
+        (
+            "https://github.com/numpy/numpy/blob/maintenance/1.0.3.x/benchmarks",
+            "benchmarks",
+            6,
+        ),
     ],
 )
 def test_root_repo(tmp_path, url, root_download, contents_size):
